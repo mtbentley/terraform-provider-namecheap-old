@@ -5,8 +5,8 @@ import (
 	"strconv"
 	"sync"
 
-	"github.com/matthewbentley/namecheap"
 	"github.com/hashicorp/terraform/helper/schema"
+	"github.com/matthewbentley/namecheap"
 )
 
 // We need a mutex here because of the underlying api

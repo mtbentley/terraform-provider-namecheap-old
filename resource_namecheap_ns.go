@@ -2,10 +2,10 @@ package main
 
 import (
 	"fmt"
-    "strings"
+	"strings"
 
-	"github.com/matthewbentley/namecheap"
 	"github.com/hashicorp/terraform/helper/schema"
+	"github.com/matthewbentley/namecheap"
 )
 
 func resourceNameCheapNS() *schema.Resource {
@@ -30,52 +30,53 @@ func resourceNameCheapNS() *schema.Resource {
 }
 
 func resourceNameCheapNSCreate(d *schema.ResourceData, meta interface{}) error {
-    mutex.Lock()
-    client := meta.(*namecheap.Client)
-    domain := d.Get("domain").(string)
-    servers := d.Get("servers").([]string)
+	mutex.Lock()
+	client := meta.(*namecheap.Client)
+	domain := d.Get("domain").(string)
+	servers := d.Get("servers").([]string)
 
-    _, err := client.SetNS(domain, servers)
-    if err != nil {
-        mutex.Unlock()
-        return fmt.Errorf("Failed to set NS: %s", err)
-    }
-    d.SetId(strings.Join(d.Get("servers").([]string), ","))
-    mutex.Unlock()
+	_, err := client.SetNS(domain, servers)
+	if err != nil {
+		mutex.Unlock()
+		return fmt.Errorf("Failed to set NS: %s", err)
+	}
+	d.SetId(strings.Join(d.Get("servers").([]string), ","))
+	mutex.Unlock()
 	return resourceNameCheapNSRead(d, meta)
 }
 
 func resourceNameCheapNSUpdate(d *schema.ResourceData, meta interface{}) error {
-    return resourceNameCheapNSCreate(d, meta)
+	return resourceNameCheapNSCreate(d, meta)
 }
 
 func resourceNameCheapNSRead(d *schema.ResourceData, meta interface{}) error {
-    mutex.Lock()
+	mutex.Lock()
 
-    client := meta.(*namecheap.Client)
-    domain := d.Get("domain").(string)
+	client := meta.(*namecheap.Client)
+	domain := d.Get("domain").(string)
 
-    servers, err := client.GetNS(domain)
-    if err != nil {
-        d.SetId("")
-        mutex.Unlock()
-        return fmt.Errorf("Failed to read servers: %s", err)
-    }
-    d.Set("servers", servers)
-    mutex.Unlock()
-    return nil
+	servers, err := client.GetNS(domain)
+	if err != nil {
+		d.SetId("")
+		mutex.Unlock()
+		return fmt.Errorf("Failed to read servers: %s", err)
+	}
+	d.Set("servers", servers)
+	mutex.Unlock()
+	return nil
 }
 
 func resourceNameCheapNSDelete(d *schema.ResourceData, meta interface{}) error {
-    mutex.Lock()
+	mutex.Lock()
 
-    client := meta.(*namecheap.Client)
-    domain := d.Get("domain").(string)
+	client := meta.(*namecheap.Client)
+	domain := d.Get("domain").(string)
 
-    err := client.ResetNS(domain)
-    if err != nil {
-        mutex.Unlock()
-        return fmt.Errorf("Failed to reset ns: %s", err)
-    }
-    return nil
+	err := client.ResetNS(domain)
+	if err != nil {
+		mutex.Unlock()
+		return fmt.Errorf("Failed to reset ns: %s", err)
+	}
+	mutex.Unlock()
+	return nil
 }

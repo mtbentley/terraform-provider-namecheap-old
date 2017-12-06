@@ -6,9 +6,9 @@ import (
 	"strconv"
 	"testing"
 
-	"github.com/matthewbentley/namecheap"
 	"github.com/hashicorp/terraform/helper/resource"
 	"github.com/hashicorp/terraform/terraform"
+	"github.com/matthewbentley/namecheap"
 )
 
 func TestAccNamecheapRecord_Basic(t *testing.T) {
