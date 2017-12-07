@@ -47,6 +47,7 @@ func Provider() terraform.ResourceProvider {
 
 		ResourcesMap: map[string]*schema.Resource{
 			"namecheap_record": resourceNameCheapRecord(),
+			"namecheap_ns":     resourceNameCheapNS(),
 		},
 
 		ConfigureFunc: providerConfigure,

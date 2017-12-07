@@ -33,14 +33,17 @@ func resourceNameCheapNSCreate(d *schema.ResourceData, meta interface{}) error {
 	mutex.Lock()
 	client := meta.(*namecheap.Client)
 	domain := d.Get("domain").(string)
-	servers := d.Get("servers").([]string)
+	var servers []string
+	for _, server := range d.Get("servers").([]interface{}) {
+		servers = append(servers, server.(string))
+	}
 
 	_, err := client.SetNS(domain, servers)
 	if err != nil {
 		mutex.Unlock()
 		return fmt.Errorf("Failed to set NS: %s", err)
 	}
-	d.SetId(strings.Join(d.Get("servers").([]string), ","))
+	d.SetId(strings.Join(servers, ","))
 	mutex.Unlock()
 	return resourceNameCheapNSRead(d, meta)
 }
